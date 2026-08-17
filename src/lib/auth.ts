@@ -14,7 +14,7 @@ export interface AdminPayload {
 }
 
 export async function signAdminToken(payload: AdminPayload): Promise<string> {
-  return new SignJWT(payload)
+  return new SignJWT(payload as unknown as Record<string, unknown>)
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("12h")
     .setIssuedAt()
