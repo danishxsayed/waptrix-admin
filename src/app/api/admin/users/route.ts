@@ -71,10 +71,12 @@ export async function PATCH(req: Request) {
 
   const db = getServiceClient();
   // store in user_status table if it exists, ignore error if not
-  await db.from("user_status").upsert({
-    user_id, status, reason: reason || null,
-    updated_by: admin.id, updated_at: new Date().toISOString()
-  }, { onConflict: "user_id" }).then(() => {}).catch(() => {});
+  try {
+    await db.from("user_status").upsert({
+      user_id, status, reason: reason || null,
+      updated_by: admin.id, updated_at: new Date().toISOString()
+    }, { onConflict: "user_id" });
+  } catch {}
 
   return NextResponse.json({ ok: true });
 }
