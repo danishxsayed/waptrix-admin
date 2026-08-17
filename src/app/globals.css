@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+/* ── Waptrix Admin — WhatsApp-inspired design system ── */
+@theme {
+  --color-background:   #EDE8DE;
+  --color-surface:      #FFFFFF;
+  --color-card:         #FFFFFF;
+  --color-border:       #E9EDEF;
+  --color-text-primary: #111B21;
+  --color-text-muted:   #667781;
+  --color-jade:         #25D366;
+  --color-jade-hover:   #128C7E;
+  --color-jade-dark:    #075E54;
+  --color-jade-light:   #D9FDD3;
+  --color-danger:       #F43F5E;
+  --color-warning:      #F59E0B;
+  --color-info:         #0EA5E9;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+:root { --background: #EDE8DE; --foreground: #111B21; }
+* { box-sizing: border-box; }
+
+body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+h1,h2,h3,h4,h5,h6 { font-weight: 700; color: #111B21; }
+
+@layer components {
+  .admin-card {
+    @apply bg-white border border-[#E9EDEF] rounded-2xl p-6 shadow-sm;
+  }
+  .admin-input {
+    @apply bg-white border border-[#E9EDEF] rounded-lg px-4 py-2.5 text-[#111B21]
+           placeholder:text-[#667781] focus:outline-none focus:ring-2 focus:ring-[#25D366]/40
+           focus:border-[#25D366]/50 transition-all text-sm w-full;
+  }
+  .admin-btn-primary {
+    @apply bg-[#25D366] text-[#111B21] px-4 py-2 rounded-lg font-semibold text-sm
+           hover:bg-[#128C7E] hover:text-white transition-all;
+  }
+  .admin-btn-secondary {
+    @apply bg-white border border-[#E9EDEF] text-[#667781] px-4 py-2 rounded-lg text-sm
+           hover:bg-[#EDE8DE] transition-all;
+  }
+  .admin-btn-danger {
+    @apply bg-[#F43F5E]/10 border border-[#F43F5E]/30 text-[#F43F5E] px-4 py-2 rounded-lg text-sm
+           hover:bg-[#F43F5E]/20 transition-all;
+  }
+  .nav-link {
+    @apply flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-[#667781]
+           hover:bg-[#EDE8DE] hover:text-[#111B21] transition-all w-full;
+  }
+  .nav-link-active { @apply bg-[#D9FDD3] text-[#075E54] font-semibold; }
+  .badge-jade   { @apply bg-[#D9FDD3] text-[#075E54] px-2 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-danger { @apply bg-[#F43F5E]/10 text-[#F43F5E] px-2 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-warn   { @apply bg-[#F59E0B]/10 text-[#F59E0B] px-2 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-info   { @apply bg-[#0EA5E9]/10 text-[#0EA5E9] px-2 py-0.5 rounded-full text-xs font-semibold; }
+  .badge-muted  { @apply bg-[#E9EDEF] text-[#667781] px-2 py-0.5 rounded-full text-xs font-semibold; }
+  .custom-scrollbar::-webkit-scrollbar       { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #E9EDEF; border-radius: 2px; }
+}
