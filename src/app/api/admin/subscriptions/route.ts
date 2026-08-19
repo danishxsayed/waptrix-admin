@@ -36,21 +36,83 @@ export async function PATCH(req: Request) {
   const { payment_id, action, expires_at } = await req.json();
   const db = getServiceClient();
 
-  const updateMap: Record<string, any> = {
+  const paymentUpdate: Record<string, any> = {
     activate: { status: "paid" },
     cancel:   { status: "cancelled" },
     extend:   { expires_at },
   };
-  if (!updateMap[action]) return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  if (!paymentUpdate[action]) return NextResponse.json({ error: "Invalid action" }, { status: 400 });
 
-  const { data, error } = await db.from("payments").update(updateMap[action]).eq("id", payment_id).select().single();
+  // Update payments table
+  const { data, error } = await db.from("payments").update(paymentUpdate[action]).eq("id", payment_id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // ── Sync tenants table so middleware paywall sees the change immediately ──
+  const tenantId = data.tenant_id;
+  if (tenantId) {
+    if (action === "activate") {
+      // Use payment's expires_at, or default to 1 year from now
+      const planExpiry = data.expires_at || new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      await db.from("tenants").update({
+        plan: "pro",
+        plan_expires_at: planExpiry,
+      }).eq("id", tenantId);
+    } else if (action === "extend") {
+      await db.from("tenants").update({
+        plan: "pro",
+        plan_expires_at: expires_at,
+      }).eq("id", tenantId);
+    } else if (action === "cancel") {
+      await db.from("tenants").update({
+        plan: "free",
+        plan_expires_at: null,
+      }).eq("id", tenantId);
+    }
+  }
 
   await db.from("admin_audit_logs").insert({
     admin_id: admin.id, admin_email: admin.email,
     action: `SUBSCRIPTION_${action.toUpperCase()}`,
     entity_type: "payment", entity_id: payment_id,
-    details: { action, expires_at },
+    details: { action, expires_at, tenant_id: tenantId },
   });
   return NextResponse.json(data);
+}
+
+/** POST — grant a fresh subscription directly to a tenant (no existing payment needed) */
+export async function POST(req: Request) {
+  const admin = await getAdminSession();
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!["super_admin","admin"].includes(admin.role)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const { tenant_id, expires_at, plan = "pro" } = await req.json();
+  if (!tenant_id || !expires_at) return NextResponse.json({ error: "tenant_id and expires_at required" }, { status: 400 });
+
+  const db = getServiceClient();
+
+  // Update tenant plan
+  const { error: tenantErr } = await db.from("tenants").update({
+    plan,
+    plan_expires_at: expires_at,
+  }).eq("id", tenant_id);
+  if (tenantErr) return NextResponse.json({ error: tenantErr.message }, { status: 500 });
+
+  // Create a payment record for audit trail
+  const { data: payment } = await db.from("payments").insert({
+    tenant_id,
+    status: "paid",
+    amount: 0,
+    billing_cycle: "admin_grant",
+    expires_at,
+    created_at: new Date().toISOString(),
+  }).select().single();
+
+  await db.from("admin_audit_logs").insert({
+    admin_id: admin.id, admin_email: admin.email,
+    action: "SUBSCRIPTION_GRANT",
+    entity_type: "tenant", entity_id: tenant_id,
+    details: { plan, expires_at },
+  });
+
+  return NextResponse.json({ ok: true, payment });
 }
