@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Users, CreditCard, DollarSign, MessageSquare,
   FileText, Megaphone, BookUser, Zap, Inbox, Bell, HeadphonesIcon,
-  Settings, ScrollText, LogOut, ChevronRight, Shield
+  Settings, ScrollText, LogOut, ChevronRight, Shield, MonitorPlay
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +20,7 @@ const NAV = [
   { label: "Automations",   href: "/automations",   icon: Zap },
   { label: "Messages",      href: "/messages",      icon: Inbox },
   { label: "Notifications", href: "/notifications", icon: Bell },
+  { label: "Popup Banner",  href: "/popup",         icon: MonitorPlay },
   { label: "Support",       href: "/support",       icon: HeadphonesIcon },
   { label: "System",        href: "/settings",      icon: Settings },
   { label: "Audit Logs",    href: "/audit-logs",    icon: ScrollText },
