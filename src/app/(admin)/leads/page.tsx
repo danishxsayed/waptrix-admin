@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Search, RefreshCw, Phone, MessageCircle, Mail, Eye } from "lucide-react";
 import Topbar from "@/components/admin/Topbar";
 import { fmtDate } from "@/lib/utils";
@@ -13,7 +13,7 @@ const USE_CASE_LABELS: Record<string, string> = {
   crm:          "CRM",
 };
 
-const CONTACT_ICON: Record<string, JSX.Element> = {
+const CONTACT_ICON: Record<string, React.ReactElement> = {
   whatsapp: <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />,
   phone:    <Phone className="w-3.5 h-3.5 text-[#3B82F6]" />,
   email:    <Mail className="w-3.5 h-3.5 text-[#F59E0B]" />,
