@@ -4,13 +4,14 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Users, CreditCard, DollarSign, MessageSquare,
   FileText, Megaphone, BookUser, Zap, Inbox, Bell, HeadphonesIcon,
-  Settings, ScrollText, LogOut, ChevronRight, Shield, MonitorPlay
+  Settings, ScrollText, LogOut, ChevronRight, Shield, MonitorPlay, PhoneCall
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { label: "Dashboard",     href: "/dashboard",    icon: LayoutDashboard },
   { label: "Users",         href: "/users",         icon: Users },
+  { label: "Leads",         href: "/leads",         icon: PhoneCall },
   { label: "Subscriptions", href: "/subscriptions", icon: CreditCard },
   { label: "Payments",      href: "/payments",      icon: DollarSign },
   { label: "WhatsApp",      href: "/whatsapp",      icon: MessageSquare },
